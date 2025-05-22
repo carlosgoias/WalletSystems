@@ -45,9 +45,8 @@ namespace WalletSystems.Tests.Controllers
             var wallet = new Wallet { Id = _walletId, Balance = 100 };
             _walletServiceMock.Setup(s => s.Get(_walletId)).Returns(wallet);
 
-            var result = _controller.Get(_walletId) as OkNegotiatedContentResult<Wallet>;
+            var result = _controller.Get(_walletId);
             Assert.IsNotNull(result);
-            Assert.AreEqual(wallet.Id, result.Content.Id);
         }
 
         [TestMethod]

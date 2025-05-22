@@ -31,7 +31,7 @@ namespace WalletSystems.Controllers
         {
             var wallet = _walletService.Get(id);
             if (wallet is null) return NotFound();
-            return Ok(wallet);
+            return Ok(wallet.ToDto());
         }
 
         [HttpPost]
