@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using WalletSystems.Core;
+using WalletSystems.Dtos.Requests;
 using WalletSystems.Extensions;
 using WalletSystems.Services.Interfaces;
 
@@ -34,20 +36,44 @@ namespace WalletSystems.Controllers
 
         [HttpPost]
         [Route("wallets/{id}/deposit")]
-        public async Task<IHttpActionResult> Deposit(Guid id, [FromBody] decimal amount)
+        public async Task<IHttpActionResult> Deposit(Guid id, [FromBody] TransactionRequestDto transactionRequestDto)
         {
-            var result = await _walletService.DepositAsync(id, amount);
-            if (result) return Ok();
-            return NotFound();
+            var result = await _walletService.DepositAsync(id, transactionRequestDto.Amount, transactionRequestDto.TransactionId);
+            if (result.Successed) return Ok();
+
+            switch(result.Exception)
+            {
+                case WalletExceptionTypes.TransactionAlreadyProcessed:
+                    return BadRequest("Transaction already processed");
+                case WalletExceptionTypes.WalletNotFound:
+                    return NotFound();
+                case WalletExceptionTypes.InvalidAmount:
+                    return BadRequest("Invalid amount");
+                default:
+                    return InternalServerError(new Exception("Transaction failed"));
+            }
         }
 
         [HttpPost]
         [Route("wallets/{id}/withdraw")]
-        public async Task<IHttpActionResult> Withdraw(Guid id, [FromBody] decimal amount)
+        public async Task<IHttpActionResult> Withdraw(Guid id, [FromBody] TransactionRequestDto transactionRequestDto)
         {
-            var result = await _walletService.WithdrawAsync(id, amount);
-            if (result) return Ok();
-            return BadRequest("Insufficient funds or wallet not found");
+            var result = await _walletService.WithdrawAsync(id, transactionRequestDto.Amount, transactionRequestDto.TransactionId);
+            if (result.Successed) return Ok();
+            
+            switch(result.Exception)
+            {
+                case WalletExceptionTypes.TransactionAlreadyProcessed:
+                    return BadRequest("Transaction already processed");
+                case WalletExceptionTypes.InsufficientFunds:
+                    return BadRequest("Insufficient funds");
+                case WalletExceptionTypes.WalletNotFound:
+                    return NotFound();
+                case WalletExceptionTypes.InvalidAmount:
+                    return BadRequest("Invalid amount");
+                default:
+                    return InternalServerError(new Exception("Transaction failed"));
+            }
         }
     }
 }

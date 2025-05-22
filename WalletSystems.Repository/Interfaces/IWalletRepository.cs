@@ -8,7 +8,7 @@ namespace WalletSystems.Repository.Interfaces
     {
         Wallet Create();
         Wallet Get(Guid id);
-        Task<bool> DepositAsync(Guid id, decimal amount);
-        Task<bool> WithdrawAsync(Guid id, decimal amount);        
+        Task<bool> DepositAsync(Guid id, decimal amount, string transactionId);
+        Task<bool> WithdrawAsync(Guid id, decimal amount, string transactionId);        
     }
 }

@@ -146,7 +146,8 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\WalletsController.cs" />
-    <Compile Include="Dtos\WalletDto.cs" />
+    <Compile Include="Dtos\Requests\TransactionRequestDto.cs" />
+    <Compile Include="Dtos\Responses\WalletDto.cs" />
     <Compile Include="Extensions\WalletExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -178,6 +179,10 @@
     <ProjectReference Include="..\WalletSystem.Services\WalletSystems.Services.csproj">
       <Project>{05d026e7-d872-75ed-5a01-fe1a777dd4bd}</Project>
       <Name>WalletSystems.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WalletSystems.Core\WalletSystems.Core.csproj">
+      <Project>{581d5f8e-9458-f358-4842-c651c4e3801c}</Project>
+      <Name>WalletSystems.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\WalletSystems.Repository\WalletSystems.Repository.csproj">
       <Project>{e86e621a-9d94-26fd-bfd6-97fd0f2eb1ad}</Project>

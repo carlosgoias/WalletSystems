@@ -1,5 +1,5 @@
 ﻿using WalletsSytems.Domain;
-using WalletSystems.Dtos;
+using WalletSystems.Responses.Dtos;
 
 namespace WalletSystems.Extensions
 {

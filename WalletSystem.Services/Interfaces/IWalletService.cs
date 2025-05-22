@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using WalletsSytems.Domain;
+using WalletSystems.Core;
 
 namespace WalletSystems.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace WalletSystems.Services.Interfaces
     {
         Wallet Create();
         Wallet Get(Guid id);
-        Task<bool> DepositAsync(Guid id, decimal amount);
-        Task<bool> WithdrawAsync(Guid id, decimal amount);
+        Task<Result> DepositAsync(Guid id, decimal amount, string transactionId);
+        Task<Result> WithdrawAsync(Guid id, decimal amount, string transactionId);
     }
 }

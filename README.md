@@ -9,7 +9,6 @@ The solution includes:
 - ✅ Unit-tested business logic
 - ✅ Dependency Injection using Unity
 
----
 
 ## 🚀 Features
 
@@ -30,8 +29,6 @@ To handle contention or failure scenarios (e.g. concurrency issues), both `Depos
 
 ### 🧪 Concurrency Handling
 Each wallet is protected by its own `SemaphoreSlim` instance to allow concurrent, isolated access. This avoids blocking unrelated wallet operations.
-
----
 
 ## 📘 Swagger UI (Interactive Docs)
 

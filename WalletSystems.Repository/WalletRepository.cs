@@ -10,6 +10,7 @@ namespace WalletSystems.Repository
 {
     public class WalletRepository : IWalletRepository
     {
+        private const int MillisecondsDelay = 200;
         private readonly ConcurrentDictionary<Guid, Wallet> _wallets;
         private readonly ConcurrentDictionary<Guid, SemaphoreSlim> _walletLocks;
         private readonly ConcurrentDictionary<Guid, CircuitBreakerState> _circuitBreakers;
@@ -33,7 +34,7 @@ namespace WalletSystems.Repository
             throw new Exception();
         }
 
-        public async Task<bool> DepositAsync(Guid id, decimal amount)
+        public async Task<bool> DepositAsync(Guid id, decimal amount, string transactionId)
         {
             if (!TryGetWalletWithState(id, out var wallet, out var semaphore, out var breaker))
                 return false;
@@ -43,11 +44,12 @@ namespace WalletSystems.Repository
 
             for (int attempt = 0; attempt < 3; attempt++)
             {
-                if (await semaphore.WaitAsync(TimeSpan.FromMilliseconds(200)))
+                if (await semaphore.WaitAsync(TimeSpan.FromMilliseconds(MillisecondsDelay)))
                 {
                     try
                     {
                         wallet.Balance += amount;
+                        wallet.ProcessedTransactions.Add(transactionId);
                         breaker.Reset();
                         return true;
                     }
@@ -62,7 +64,7 @@ namespace WalletSystems.Repository
                     }
                 }
 
-                await Task.Delay(200);
+                await Task.Delay(MillisecondsDelay);
             }
 
             breaker.RecordFailure();
@@ -77,7 +79,7 @@ namespace WalletSystems.Repository
             return null;
         }
 
-        public async Task<bool> WithdrawAsync(Guid id, decimal amount)
+        public async Task<bool> WithdrawAsync(Guid id, decimal amount, string transactionId)
         {
             if (!TryGetWalletWithState(id, out var wallet, out var semaphore, out var breaker))
                 return false;
@@ -87,17 +89,14 @@ namespace WalletSystems.Repository
 
             for (int attempt = 0; attempt < 3; attempt++)
             {
-                if (await semaphore.WaitAsync(TimeSpan.FromMilliseconds(200)))
+                if (await semaphore.WaitAsync(TimeSpan.FromMilliseconds(MillisecondsDelay)))
                 {
                     try
                     {
-                        if (wallet.Balance >= amount)
-                        {
-                            wallet.Balance -= amount;
-                            breaker.Reset();
-                            return true;
-                        }
-                        return false;
+                        wallet.Balance -= amount;
+                        wallet.ProcessedTransactions.Add(transactionId);
+                        breaker.Reset();
+                         return true;                        
                     }
                     catch
                     {
@@ -110,7 +109,7 @@ namespace WalletSystems.Repository
                     }
                 }
 
-                await Task.Delay(200); 
+                await Task.Delay(MillisecondsDelay); 
 
             }
 
@@ -120,7 +119,6 @@ namespace WalletSystems.Repository
 
         private bool TryGetWalletWithState(Guid id, out Wallet wallet, out SemaphoreSlim semaphore, out CircuitBreakerState breaker)
         {
-            wallet = null;
             semaphore = null;
             breaker = null;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WalletSystems.Dtos
+namespace WalletSystems.Responses.Dtos
 {
     public class WalletDto
     {
