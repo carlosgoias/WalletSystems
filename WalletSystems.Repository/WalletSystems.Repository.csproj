@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WalletsSytems.Domain\WalletsSytems.Domain.csproj" />
+    <ProjectReference Include="..\WalletSystems.Core\WalletSystems.Core.csproj" />
   </ItemGroup>
 
 </Project>
