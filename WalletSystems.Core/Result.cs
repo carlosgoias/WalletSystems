@@ -15,7 +15,7 @@
 
         public static Result Success()
         {
-            return new Result(WalletExceptionTypes.None, false);
+            return new Result(WalletExceptionTypes.None, true);
         }
 
         public static Result Fail(WalletExceptionTypes exception)
